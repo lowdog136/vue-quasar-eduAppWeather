@@ -14,6 +14,23 @@
         </template>
       </q-input>
     </div>
+    <div class="col text-white text-center">
+      <div class="text-h4 text-weight-light">
+        Kaliningrad
+      </div>
+      <div class="text-h6 text-weight-light">
+        Rain
+      </div>
+      <div class="text-h1 text-weight-thin" q-my-lg relative-position>
+        <span>8</span>
+        <span class="text-h4 relative-position degree">&deg;</span>
+      </div>
+    </div>
+    <div class="col text-center">
+      <img src="https://www.fillmurray.com/100/100" alt="Bill">
+    </div>
+    <div class="col skyline">
+    </div>
   </q-page>
 </template>
 
@@ -30,5 +47,14 @@ export default {
 <style lang="scss">
 .q-page {
 background: linear-gradient(to top, #0f0c29, #302b63, #24243e )
+}
+.degree {
+  top: -44px;
+}
+.skyline {
+  flex: 0 0 100px;
+  background: url("../assets/static.png");
+  background-size: contain;
+  background-position: center bottom;
 }
 </style>
