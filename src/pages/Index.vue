@@ -7,7 +7,9 @@
         borderless
         dark>
         <template v-slot:before>
-          <q-icon name="my_location" />
+          <q-icon
+            @click="getLocation"
+            name="my_location" />
         </template>
         <template v-slot:append>
           <q-btn round dense flat icon="search" />
@@ -36,6 +38,13 @@
         <div class="text-h2 text-weight-thin">
           Quasar<br>Weather
         </div>
+        <q-btn
+          @click="getLocation"
+          class="col"
+          flat>
+          <q-icon left size="3em" name="my_location" />
+          <div>Определить свое местоположение</div>
+        </q-btn>
       </div>
       <div class="col text-center">
         <img src="https://www.fillmurray.com/100/100" alt="Bill">
@@ -52,7 +61,31 @@ export default {
   data () {
     return {
       search: '',
-      weatherData: null
+      weatherData: null,
+      lat: null,
+      lon: null,
+      apiUrl: 'https://api.openweathermap.org/data/2.5/weather',
+      apiKey: fdd175c1efdc932c7b38b1889aece29a
+    }
+  },
+  methods: {
+    getLocation () {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          console.log('position: ', position)
+          this.lat = position.coords.latitude
+          this.lon = position.coords.latitude
+          this.getWeatherByCoords () {
+            this.$axios('${ this.apiUrl }?lat=${ this.lat }&lon=${ this.lon }&appid=${ apiKey }&units=metric').then(
+              response => {
+                console.log('response: ', response)
+              }
+            )
+          }
+        })
+    },
+    getWeatherByCoords() {
+
     }
   }
 }
