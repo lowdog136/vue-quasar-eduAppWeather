@@ -1,8 +1,9 @@
 <template>
-  <q-page class="flex column">
+  <q-page class="flex column" :class="bgClass">
     <div class="col q-pt-lg q-px-md">
       <q-input
         v-model="search"
+        @keyup.enter="getWeatherBySearch"
         placeholder="Поиск"
         borderless
         dark>
@@ -12,7 +13,12 @@
             name="my_location" />
         </template>
         <template v-slot:append>
-          <q-btn round dense flat icon="search" />
+          <q-btn
+            @click="getWeatherBySearch"
+            round
+            dense
+            flat
+            icon="search" />
         </template>
       </q-input>
     </div>
@@ -26,17 +32,17 @@
         </div>
         <div class="text-h1 text-weight-thin" q-my-lg relative-position>
           <span>{{ Math.round(weatherData.main.temp) }}</span>
-          <span class="text-h4 relative-position degree">&deg;</span>
+          <span class="text-h4 relative-position degree">&deg;C</span>
         </div>
       </div>
       <div class="col text-center">
-        <img src="https://www.fillmurray.com/100/100" alt="Bill">
+        <img :src="`http://openweathermap.org/img/wn/${ weatherData.weather[0].icon }@2x.png`">
       </div>
     </template>
     <template v-else>
       <div class="col column text-white text-center">
         <div class="text-h2 text-weight-thin">
-          Quasar<br>Weather
+          Weather<br>Training App
         </div>
         <q-btn
           @click="getLocation"
@@ -69,8 +75,20 @@ export default {
       info: null
     }
   },
+  computed: {
+    bgClass () {
+      if (this.weatherData) {
+        if (this.weatherData.weather[0].icon.endsWith('n')) {
+          return 'bg-night'
+        } else {
+          return 'bg-day'
+        }
+      }
+    }
+  },
   methods: {
     getLocation () {
+      this.$q.loading.show()
       navigator.geolocation.getCurrentPosition(
         position => {
           this.lat = position.coords.latitude
@@ -80,9 +98,18 @@ export default {
     },
     getWeatherByCoords () {
       // eslint-disable-next-line no-template-curly-in-string
+      this.$q.loading.show()
       this.$axios(`${this.apiUrl}?lat=${this.lat}&lon=${this.lon}&appid=${this.apiKey}&units=metric`).then(response => {
         this.weatherData = response.data
-        console.log('respone: ', response.data)
+        this.$q.loading.hide()
+      })
+    },
+    getWeatherBySearch () {
+      // eslint-disable-next-line no-template-curly-in-string
+      this.$q.loading.show()
+      this.$axios(`${this.apiUrl}?q=${this.search}&appid=${this.apiKey}&units=metric`).then(response => {
+        this.weatherData = response.data
+        this.$q.loading.hide()
       })
     }
   }
@@ -90,7 +117,11 @@ export default {
 </script>
 <style lang="scss">
 .q-page {
-background: linear-gradient(to top, #0f0c29, #302b63, #24243e )
+background: linear-gradient(to top, #222131, #302b63, #43439b)
+&.bg-night
+background: linear-gradient(to bottom, #232526, #414345)
+&.bg-day
+background: linear-gradient(to bottom, #b1bfc5, #d9b660)
 }
 .degree {
   top: -44px;
