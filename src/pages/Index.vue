@@ -19,13 +19,13 @@
     <template v-if="weatherData">
       <div class="col text-white text-center">
         <div class="text-h4 text-weight-light">
-          Kaliningrad
+          {{ weatherData.name }}
         </div>
         <div class="text-h6 text-weight-light">
-          Rain
+          {{ weatherData.weather[0].main }}
         </div>
         <div class="text-h1 text-weight-thin" q-my-lg relative-position>
-          <span>8</span>
+          <span>{{ Math.round(weatherData.main.temp) }}</span>
           <span class="text-h4 relative-position degree">&deg;</span>
         </div>
       </div>
@@ -65,27 +65,25 @@ export default {
       lat: null,
       lon: null,
       apiUrl: 'https://api.openweathermap.org/data/2.5/weather',
-      apiKey: fdd175c1efdc932c7b38b1889aece29a
+      apiKey: 'fdd175c1efdc932c7b38b1889aece29a',
+      info: null
     }
   },
   methods: {
     getLocation () {
       navigator.geolocation.getCurrentPosition(
         position => {
-          console.log('position: ', position)
           this.lat = position.coords.latitude
-          this.lon = position.coords.latitude
-          this.getWeatherByCoords () {
-            this.$axios('${ this.apiUrl }?lat=${ this.lat }&lon=${ this.lon }&appid=${ apiKey }&units=metric').then(
-              response => {
-                console.log('response: ', response)
-              }
-            )
-          }
+          this.lon = position.coords.longitude
+          this.getWeatherByCoords()
         })
     },
-    getWeatherByCoords() {
-
+    getWeatherByCoords () {
+      // eslint-disable-next-line no-template-curly-in-string
+      this.$axios(`${this.apiUrl}?lat=${this.lat}&lon=${this.lon}&appid=${this.apiKey}&units=metric`).then(response => {
+        this.weatherData = response.data
+        console.log('respone: ', response.data)
+      })
     }
   }
 }
